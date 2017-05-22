@@ -38,7 +38,7 @@
 	$ autoconf
 	$ ./configure
 	$ make
-	\# make install
+	# make install
 	```
 ## Problem/BUGS report:
 	If you find any bugs or problems just mail me
