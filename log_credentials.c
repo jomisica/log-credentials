@@ -12,7 +12,7 @@
  *  GNU General Public License for more details.
  *
  *  You should have received a copy of the GNU General Public License
- *  along with this program - see the file COPYING.
+ *  along with this program - see the file LICENSE.
  *
  * As figuras imaginárias têm mais relevo e verdade que as reais.
  * "Fernando Pessoa"
