@@ -28,7 +28,7 @@
 	You can clone the repository wherever you want. (I like to keep it in
 	`~/Projects/log-credentials`.)
 
-```bash
+
 	$ git clone https://github.com/jomisica/log-credentials.git
 	$ cd log-credentials
 	$ libtoolize --force
@@ -39,7 +39,7 @@
 	$ ./configure
 	$ make
 	# make install
-	```
+
 ## Problem/BUGS report:
 	If you find any bugs or problems just mail me
 	José Miguel Silva Caldeira <miguel@ncdc.pt>
