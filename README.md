@@ -1,5 +1,4 @@
 # log-credentials
-
 	PAM log-credentials has been written by José Miguel Silva Caldeira <miguel@ncdc.pt>.
 
 ## Description:
@@ -23,22 +22,65 @@
 
 ## Installation
 
-### Using Git
-
+### Clone the project
 	You can clone the repository wherever you want. (I like to keep it in
 	`~/Projects/log-credentials`.)
 
+```Bash
+$ cd ~/Projects
+$ git clone https://github.com/jomisica/log-credentials.git
+```
 
-	$ git clone https://github.com/jomisica/log-credentials.git
-	$ cd log-credentials
-	$ libtoolize --force
-	$ aclocal
-	$ autoheader
-	$ automake --force-missing --add-missing
-	$ autoconf
-	$ ./configure
-	$ make
-	# make install
+### Dependent software
+In order to compile this software it is necessary to first install the dependencies. This will depend on the system in question below is the example for CentOS and Ubuntu.
+
+#### CentOS 7
+In CentOS it is necessary to install the "Development Tools" group that installs the necessary software to compile this software.
+
+It is also necessary to install the package "pam-devel" that has the necessary headers so that it is possible to develop modules for the PAM in the system that we use.
+
+```Bash
+# yum group install "Development Tools"
+# yum install pam-devel
+```
+
+#### Ubuntu
+In Ubuntu it is necessary to install the software dependent to compile this software.
+
+It is also necessary to install the package "libpam0g-dev" that has the necessary headers so that it is possible to develop modules for the PAM in the system that we use.
+
+```bash
+# apt-get build-dep pam
+# apt-get install libpam0g-dev
+```
+
+### Build
+```Bash
+$ cd log-credentials
+$ libtoolize --force
+$ aclocal
+$ autoheader
+$ automake --force-missing --add-missing
+$ autoconf
+```
+The directory where the PAM modules are installed are different in several systems as such we have to pass the correct directory when configuring.
+
+#### CentOS 64bits
+```bash
+$ ./configure --with-pam-dir=/lib64/security
+```
+
+#### Ubuntu 64bits
+```bash
+$ ./configure --with-pam-dir=/lib/x86_64-linux-gnu/security
+```
+
+```bash
+$ make
+# make install
+```
+
+**It's done!**
 
 ## Problem/BUGS report:
 	If you find any bugs or problems just mail me
