@@ -62,15 +62,15 @@ $ autoconf
 ```
 The directory where the PAM modules are installed are different in several systems as such we have to pass the correct directory when configuring.
 
-	#### CentOS 64bits
-	```bash
-	$ ./configure --with-pam-dir=/lib64/security
-	```
+#### CentOS 64bits
+```bash
+		$ ./configure --with-pam-dir=/lib64/security
+```
 
-	#### Ubuntu 64bits
-	```bash
-	$ ./configure --with-pam-dir=/lib/x86_64-linux-gnu/security
-	```
+#### Ubuntu 64bits
+```bash
+		$ ./configure --with-pam-dir=/lib/x86_64-linux-gnu/security
+```
 
 ```bash
 $ make
