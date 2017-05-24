@@ -2,7 +2,7 @@
 PAM log-credentials has been written by José Miguel Silva Caldeira <miguel@ncdc.pt>.
 
 ## Description:
-PAM log-credentials allows you to log credentials after authorization.
+PAM log-credentials allows you to log credentials.
 It will log messages like that:
 **May 22 18:50:15 localhost log-credentials: host=xxx.xxx.xxx.xxx service=sshd user=root pass=xxxxxxx**.
 
@@ -77,8 +77,14 @@ $ make
 # make install
 ```
 
+## Configure PAM module
+In order for the module to work we need to add the following line to the /etc/pam.d/sshd configuration file before any other module or file inclosion.
+
+```
+auth       optional     log_credentials.so
+```
+
 **It's done!**
 
 ## Problem/BUGS report:
-	If you find any bugs or problems just mail me
-	José Miguel Silva Caldeira <miguel@ncdc.pt>
+If you find any bugs or problems just mail me José Miguel Silva Caldeira <miguel@ncdc.pt>
