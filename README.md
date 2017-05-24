@@ -18,6 +18,19 @@ In this way it is possible for the administrator to be aware and to take measure
 
 Use at your own risk!
 
+Do not use on a production system where multiple users have access to the logs. If you do, everyone has access to all credentials.
+
+If you still want to do so, configure the log file access permissions.
+
+## Ethic
+Since this module logs all the credentials it is clear that it also logs the correct ones.
+
+This module can be used as "KeyLogger" if it is badly installed on some system.
+
+My intention is to use it for study purposes but stay of the conscience of each one uses it for a certain purpose.
+
+Be cool!
+
 ## Installation
 
 ### Clone the project
