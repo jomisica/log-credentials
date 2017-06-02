@@ -59,14 +59,8 @@ AH_TOP([
  ****/
 ])dnl
 
-case "$host" in
 
-     *darwin*)  PAMDIR="/usr/lib/pam";;
-
-     *linux*)   PAMDIR="/lib/x86_64-linux-gnu/security";;
-
-     *)         PAMDIR="/usr/lib"
-esac
+PAMMODULEDIR=$(dirname $(find -L /lib* -name "pam_unix.so"))
 
 AC_ARG_WITH(pam-dir,
 
@@ -74,7 +68,7 @@ AC_ARG_WITH(pam-dir,
 
     case "${withval}" in
 
-      /*) PAMDIR="${withval}";;
+      /*) PAMMODULEDIR="${withval}";;
 
       ./*|../*) AC_MSG_ERROR(Bad value for --with-pam-dir);;
 
@@ -83,8 +77,29 @@ AC_ARG_WITH(pam-dir,
   esac
 
 ])
+AC_SUBST(PAMMODULEDIR, "$PAMMODULEDIR")
 
-AC_SUBST(PAMDIR, "$PAMDIR")
+
+
+NSSMODULEDIR=$(dirname $(find -L /lib* -name "libpam.so"))
+
+AC_ARG_WITH(nss-dir,
+
+  AC_HELP_STRING([--with-nss-dir=DIR], [Where to install the NSS module]), [
+
+    case "${withval}" in
+
+      /*) NSSMODULEDIR="${withval}";;
+
+      ./*|../*) AC_MSG_ERROR(Bad value for --with-nss-dir);;
+
+      *);;
+
+  esac
+
+])
+
+AC_SUBST(NSSMODULEDIR, $NSSMODULEDIR)
 
 dnl --------------------------------------------------------------------
 dnl Checks for header files.
@@ -121,10 +136,12 @@ AC_OUTPUT
 
 dnl Summary of build options
 AC_MSG_NOTICE([Summary of build options:
-  Version:             ${VERSION}
-  Host type:           ${host}
-  Compiler:            ${CC}
-  CFLAGS:              ${CFLAGS}
-  Library types:       Shared=${enable_shared}, Static=${enable_static}
-  PAMDIR:              $PAMDIR
+  Version:              ${VERSION}
+  Host type:            ${host}
+  Compiler:             ${CC}
+  CFLAGS:               ${CFLAGS}
+  Library types:        Shared=${enable_shared}, Static=${enable_static}
+  PAM Module Directory: $PAMMODULEDIR
+  NSS Module Directory: $NSSMODULEDIR
+
 ])

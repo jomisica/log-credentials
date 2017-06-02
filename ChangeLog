@@ -1,3 +1,11 @@
-2017/05/22  José Miguel Silva Caldeira <miguel@ncdc.pt>
+2017/05/30 José Miguel Silva Caldeira <miguel@ncdc.pt>
+
+	* Procurar o local correto para os  modulos PAM e NSS no configur.ac
+
+2017/05/30 José Miguel Silva Caldeira <miguel@ncdc.pt>
+
+	* Adicionar o module NSS para capturar as passwords de utilizadores inexistentes.
+
+2017/05/22 José Miguel Silva Caldeira <miguel@ncdc.pt>
 
 	* Organize and make the project available in github.

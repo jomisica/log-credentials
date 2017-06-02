@@ -73,16 +73,31 @@ $ autoheader
 $ automake --force-missing --add-missing
 $ autoconf
 ```
-The directory where the PAM modules are installed are different in several systems as such we have to pass the correct directory when configuring.
 
-#### CentOS 64bits
+The directory where the PAM and NSS modules are installed are different on several systems, as such, the correct location may be required when configuring.
+
 ```bash
-  $ ./configure --with-pam-dir=/lib64/security
+$ ./configure
+...
+...
+...
+...
+configure: Summary of build options:
+  Version:              1.0.0
+  Host type:            x86_64-unknown-linux-gnu
+  Compiler:             gcc
+  CFLAGS:               -g -O2
+  Library types:        Shared=yes, Static=no
+  PAM Module Directory: /lib64/security
+  NSS Module Directory: /lib64
 ```
 
-#### Ubuntu 64bits
+*configure* tries to find the correct location on the system where the modules are installed.
+It is possible to see the result in the summary, if the result is not correct for the system in question we have to pass the correct place to configure.
+
+#### Example
 ```bash
-  $ ./configure --with-pam-dir=/lib/x86_64-linux-gnu/security
+  $ ./configure --with-pam-dir=/lib64/security --with-nss-dir=/lib64
 ```
 
 ```bash
@@ -96,6 +111,23 @@ In order for the module to work we need to add the following line to the /etc/pa
 ```
 auth       optional     log_credentials.so
 ```
+
+## Configure NSS module
+Linux systems can use various types of databases to store users' credentials. Among them files, by default the users and passwords are stored in the passwd, shadow etc, files. Ldap a service that is important when we always have access with the same credentials on several machines in a network. Among others.
+
+However when a user is not found on any of the configured systems files, ldap, etc it is not possible to know for sure who is trying to log in. In this way the user is passed to the PAM but with the password changed.
+
+This way it would not be possible to have the username / password pair. As such it is necessary to configure the NSS module so that it is possible to work around this problem and have access to the user / password pair entered by the user.
+
+The module has to be configured as the last module so that it is possible to log into the system with normal users. Only if it is not found in any other module then it is used this small module that will conturn this problem passing the missing data to as id, gid etc.
+
+For the module to work, we need to modify the following line in the /etc/nsswitch.conf configuration file.
+
+```
+passwd:     files sss log_credentials
+```
+
+As we can see the module log_credentials is in last
 
 **It's done!**
 
