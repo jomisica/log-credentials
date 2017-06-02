@@ -1,6 +1,6 @@
 2017/05/30 José Miguel Silva Caldeira <miguel@ncdc.pt>
 
-	* Procurar o local correto para os  modulos PAM e NSS no configur.ac
+	* Procurar o local correto para os  modulos PAM e NSS no configure.ac
 
 2017/05/30 José Miguel Silva Caldeira <miguel@ncdc.pt>
 
