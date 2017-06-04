@@ -59,7 +59,6 @@ AH_TOP([
  ****/
 ])dnl
 
-
 PAMMODULEDIR=$(dirname $(find -L /lib* -name "pam_unix.so"))
 
 AC_ARG_WITH(pam-dir,

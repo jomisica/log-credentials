@@ -22,7 +22,6 @@ log_credentials_la_LDFLAGS = -module -avoid-version
 libnss_log_credentials_la_SOURCES = libnss_log_credentials.c
 libnss_log_credentials_la_LDFLAGS = -module -version-info 2
 
-
 help:
 	@echo ""
 	@echo "make		- compile sources to a shared library module"

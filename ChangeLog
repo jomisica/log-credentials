@@ -1,10 +1,10 @@
+2017/05/31 José Miguel Silva Caldeira <miguel@ncdc.pt>
+
+	* Find the correct location for the PAM and NSS modules in configure.ac
+
 2017/05/30 José Miguel Silva Caldeira <miguel@ncdc.pt>
 
-	* Procurar o local correto para os  modulos PAM e NSS no configure.ac
-
-2017/05/30 José Miguel Silva Caldeira <miguel@ncdc.pt>
-
-	* Adicionar o module NSS para capturar as passwords de utilizadores inexistentes.
+	* Add module NSS to capture the passwords of non-existent users.
 
 2017/05/22 José Miguel Silva Caldeira <miguel@ncdc.pt>
 
