@@ -1,3 +1,8 @@
+2018/04/5 José Miguel Silva Caldeira <miguel@ncdc.pt>
+
+	* I added the "#include <errno.h>" header in the "libnss_log_credentials.c" file to work with CentOS6
+	* I improved the "configure.ac" file to find the location of the PAM and NSS modules better.
+
 2017/05/31 José Miguel Silva Caldeira <miguel@ncdc.pt>
 
 	* Find the correct location for the PAM and NSS modules in configure.ac

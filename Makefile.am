@@ -9,7 +9,7 @@
 
 ACLOCAL_AMFLAGS= -I config
 mdir = $(PAMMODULEDIR)
-sdir=$(NSSMODULEDIR)
+sdir= $(NSSMODULEDIR)
 #m_LTLIBRARIES = log_credentials.la
 #log_credentials_la_SOURCES = log_credentials.c
 #log_credentials_la_LDFLAGS = -module -avoid-version
