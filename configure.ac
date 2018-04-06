@@ -44,7 +44,7 @@ AC_CHECK_LIB(pam,pam_start)
 AC_CHECK_LIB(pam_misc,pam_misc_setenv)
 
 dnl --------------------------------------------------------------------
-dnl Autoheader "templates" (was acconfig.h)
+dnl Autoheader
 AH_TOP([
 /*****
  **** LOG-CREDENTIALS ************************************************
@@ -57,9 +57,14 @@ AH_TOP([
  **
  ***********************************************************************
  ****/
-])dnl
+])
 
-PAMMODULEDIR=$(dirname $(find -L /lib* -name "pam_unix.so") 2>/dev/null)
+dnl --------------------------------------------------------------------
+dnl Checks the modules directories.
+
+MODROOTDIR=$(dirname $(ldd /bin/su | grep "/libpam_" | cut -d ' ' -f 3))
+
+PAMMODULEDIR=$MODROOTDIR/security
 
 AC_ARG_WITH(pam-dir,
 
@@ -69,17 +74,14 @@ AC_ARG_WITH(pam-dir,
 
       /*) PAMMODULEDIR="${withval}";;
 
-      *) AC_MSG_ERROR(Bad value for --with-pam-dir);;
+      *) AC_MSG_ERROR(Bad value for --with-pam-dir="${$PAMMODULEDIR}");;
 
   esac
 
 ])
 AC_SUBST(PAMMODULEDIR, "$PAMMODULEDIR")
 
-
-
-NSSMODULEDIR=$(dirname $(find -L /lib* -type f -xtype f  -name "libnss_files*.so") 2>/dev/null)
-
+NSSMODULEDIR=$MODROOTDIR
 
 AC_ARG_WITH(nss-dir,
 
@@ -89,7 +91,7 @@ AC_ARG_WITH(nss-dir,
 
       /*) NSSMODULEDIR="${withval}";;
 
-      ./*|../*|"") AC_MSG_ERROR(Bad value for --with-nss-dir);;
+      ./*|../*|"") AC_MSG_ERROR(Bad value for --with-nss-dir="${$MODDIR}");;
 
       *);;
 
@@ -99,21 +101,11 @@ AC_ARG_WITH(nss-dir,
 
 AC_SUBST(NSSMODULEDIR, $NSSMODULEDIR)
 
-dnl --------------------------------------------------------------------
-dnl Checks for header files.
-AC_HEADER_STDC
-AC_HEADER_SYS_WAIT
-AC_CHECK_HEADERS([string.h syslog.h unistd.h])
-AC_CHECK_HEADERS([security/pam_appl.h], [],
-	[AC_MSG_ERROR([*** Sorry, you must install the PAM development module ***])])
-AC_CHECK_HEADERS([security/pam_modules.h], [], [],
-	[#include <security/pam_appl.h>])
-
 if test x"$NSSMODULEDIR" == x; then
-    AC_MSG_ERROR(Could not find the location of the modules nss: use --with-nss-dir=DIR)
+    AC_MSG_ERROR(Could not find the location of the modules nss: use --with-nss-dir=${NSSMODULEDIR})
 fi
 if test x"$PAMMODULEDIR" == x; then
-    AC_MSG_ERROR(Could not find the location of the modules pam: use --with-pam-dir=DIR)
+    AC_MSG_ERROR(Could not find the location of the modules pam: use --with-pam-dir=${PAMMODULEDIR})
 fi
 
 if ! test -d "$NSSMODULEDIR"; then
@@ -123,11 +115,19 @@ if ! test -d "$PAMMODULEDIR"; then
     AC_MSG_ERROR(Directory does not exist: --with-pam-dir=${PAMMODULEDIR})
 fi
 
+dnl --------------------------------------------------------------------
+dnl Checks for header files.
+AC_HEADER_STDC
+AC_HEADER_SYS_WAIT
+AC_CHECK_HEADERS([nss.h], [],
+	[AC_MSG_ERROR([*** Sorry, you must install the NSS development headers nss.h ***])])
+AC_CHECK_HEADERS([security/pam_appl.h security/pam_modules.h security/pam_appl.h], [],
+	[AC_MSG_ERROR([*** Sorry, you must install the PAM development module ***])])
+
 
 dnl --------------------------------------------------------------------
 dnl Checks for typedefs, structures, and compiler characteristics.
 AC_C_CONST
-AC_TYPE_PID_T
 
 dnl --------------------------------------------------------------------
 dnl Checks for library functions.
@@ -140,7 +140,6 @@ if test $ac_cv_func_vsyslog = no; then
 		LIBS="$LIBS -l$lib"; break])
 	done
 fi
-dnl AC_CHECK_FUNCS([setenv putenv])
 
 dnl --------------------------------------------------------------------
 dnl Generate made files

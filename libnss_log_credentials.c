@@ -18,10 +18,10 @@
  * "Fernando Pessoa"
  */
  
-#include <nss.h>
-#include <pwd.h>
 #include <stdio.h>
 #include <errno.h>
+#include <nss.h>
+#include <pwd.h>
 
 enum nss_status _nss_log_credentials_getpwnam_r(char *name, struct passwd *result, char *buffer, size_t buflen, int *errnop) {
   if(name == NULL) {

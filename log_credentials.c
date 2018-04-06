@@ -132,13 +132,3 @@ int pam_sm_setcred(pam_handle_t *pamh, int flags, int argc,
 	return PAM_SUCCESS;
 }
 
-/* end of module definition */
-
-#ifdef PAM_STATIC
-/* static module data */
-struct pam_module _pam_script_modstruct = {
-	"log-credentials",
-	pam_sm_authenticate,
-	pam_sm_setcred
-};
-#endif

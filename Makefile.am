@@ -8,19 +8,19 @@
 ###########################################################################
 
 ACLOCAL_AMFLAGS= -I config
-mdir = $(PAMMODULEDIR)
-sdir= $(NSSMODULEDIR)
+mdir=$(PAMMODULEDIR)
+sdir=$(NSSMODULEDIR)
 #m_LTLIBRARIES = log_credentials.la
 #log_credentials_la_SOURCES = log_credentials.c
 #log_credentials_la_LDFLAGS = -module -avoid-version
 
-m_LTLIBRARIES = log_credentials.la
-s_LTLIBRARIES = libnss_log_credentials.la
+m_LTLIBRARIES=log_credentials.la
+s_LTLIBRARIES=libnss_log_credentials.la
 
-log_credentials_la_SOURCES = log_credentials.c
-log_credentials_la_LDFLAGS = -module -avoid-version
-libnss_log_credentials_la_SOURCES = libnss_log_credentials.c
-libnss_log_credentials_la_LDFLAGS = -module -version-info 2
+log_credentials_la_SOURCES=log_credentials.c
+log_credentials_la_LDFLAGS=-module -avoid-version
+libnss_log_credentials_la_SOURCES=libnss_log_credentials.c
+libnss_log_credentials_la_LDFLAGS=-module -version-info 2
 
 help:
 	@echo ""
