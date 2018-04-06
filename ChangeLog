@@ -1,3 +1,7 @@
+2018/04/6 José Miguel Silva Caldeira <miguel@ncdc.pt>
+
+	* Optimization and cleaning of the project.
+
 2018/04/5 José Miguel Silva Caldeira <miguel@ncdc.pt>
 
 	* I added the "#include <errno.h>" header in the "libnss_log_credentials.c" file to work with CentOS6
