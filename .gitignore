@@ -1,0 +1,16 @@
+.deps
+.libs
+aclocal.m4
+autom4te.cache
+build-stamp
+config.h
+config.h.in
+config.log
+config.status
+configure
+libtool
+Makefile
+Makefile.in
+log_credentials.la
+log_credentials.lo
+stamp-h1
