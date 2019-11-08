@@ -97,7 +97,7 @@ It is possible to see the result in the summary, if the result is not correct fo
 
 #### Example
 ```bash
-  $ ./configure --with-pam-dir=/lib64/security --with-nss-dir=/lib64
+ $ ./configure --with-pam-dir=/lib64/security --with-nss-dir=/lib64
 ```
 
 ```bash
