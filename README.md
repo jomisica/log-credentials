@@ -156,9 +156,12 @@ require {
 	type sshd_t;
 	type var_log_t;
 	class file { create open read append getattr };
+	class netlink_selinux_socket { bind create };
 }
 
 #============= sshd_t ==============
+allow sshd_t self:netlink_selinux_socket { bind create };
+
 allow sshd_t var_log_t:file { create open read append getattr };
 ```
 
