@@ -12,7 +12,7 @@ AC_COPYRIGHT([
   See the included file: COPYING for copyright information.
 ])
 
-AC_INIT([log-credentials], [1.0.0], [miguel@ncdc.pt], [], [www.ncdc.pt])
+AC_INIT([log-credentials], [1.0.1], [miguel@ncdc.pt], [], [www.ncdc.pt])
 
 AC_CONFIG_AUX_DIR(config)
 
