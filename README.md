@@ -44,7 +44,7 @@ $ git clone https://github.com/jomisica/log-credentials.git
 ### Dependent software
 In order to compile this software it is necessary to first install the dependencies. This will depend on the system in question below is the example for CentOS and Ubuntu.
 
-#### CentOS 7
+#### CentOS 7/8
 In CentOS it is necessary to install the "Development Tools" group that installs the necessary software to compile this software.
 
 It is also necessary to install the package "pam-devel" that has the necessary headers so that it is possible to develop modules for the PAM in the system that we use.
@@ -83,7 +83,7 @@ $ ./configure
 ...
 ...
 configure: Summary of build options:
-  Version:              1.0.0
+  Version:              1.0.1
   Host type:            x86_64-unknown-linux-gnu
   Compiler:             gcc
   CFLAGS:               -g -O2
@@ -109,7 +109,19 @@ $ make
 In order for the module to work we need to add the following line to the /etc/pam.d/sshd configuration file before any other module or file inclosion.
 
 ```
-auth       optional     log_credentials.so
+auth       optional     log_credentials.so 
+```
+
+## PAM Module Options
+
+The module has the following options:
+* **onlytrueusers** - Allows only the correct logins to be logged;
+* **file** - Allows you to specify the location of the file eg: "file=/var/log/log-credentials.log".
+
+These options are used if they exist in the configuration file:
+
+```
+auth       optional     log_credentials.so onlytrueusers file=/var/log/log-credentials.log
 ```
 
 ## Configure NSS module
@@ -129,7 +141,41 @@ passwd:     files sss log_credentials
 
 As we can see the module log_credentials is in last
 
+## Configure SELinux CentOS 8
+
+In CentOS 8 SELinux uses the default "Enforcing" execution mode.
+In order to use the module's "file" parameter to store the log file in a given directory we have to create a module for SELinux.
+I will give an example of a module that allows you to create the log file in /var/log/[file name].log.
+For other locations you will need to make the appropriate modifications, read more here: https://wiki.centos.org/HowTos/SELinux
+The module is located within the project selinux directory and its following content:
+
+```
+module log-credentials-sshd 1.0;
+
+require {
+	type sshd_t;
+	type var_log_t;
+	class file { create open read append getattr };
+}
+
+#============= sshd_t ==============
+allow sshd_t var_log_t:file { create open read append getattr };
+```
+
+Run the following commands to generate the module and install it:
+
+```Bash
+$ cd ~/Projects/log-credentials/selinux
+# checkmodule -M -m -o log-credentials-sshd.mod log-credentials-sshd.te
+# semodule_package -o log-credentials-sshd.pp -m log-credentials-sshd.mod
+# semodule -i log-credentials-sshd.pp
+```
+
+After executing the commands it is already possible to use the option "file=/var/log/log-credentials.log" for example.
+
+
 **It's done!**
+
 
 
 ## Problem/BUGS report:
