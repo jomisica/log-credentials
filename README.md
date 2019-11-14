@@ -26,9 +26,9 @@ If you still want to do so, configure the log file access permissions.
 
 ## Tested Services / Commands
 The module has been tested with the services / commands:
-** sshd service;
-** sudo command;
-** su command.
+* sshd service;
+* sudo command;
+* su command.
 
 ## Ethic
 Since this module logs all the credentials it is clear that it also logs the correct ones.
