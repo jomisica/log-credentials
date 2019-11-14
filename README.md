@@ -3,8 +3,9 @@ PAM log-credentials has been written by José Miguel Silva Caldeira <miguel@ncdc
 
 ## Description:
 PAM log-credentials allows you to log credentials.
-It will log messages like that:
-**May 22 18:50:15 localhost log-credentials: host=xxx.xxx.xxx.xxx service=sshd user=root pass=xxxxxxx**.
+It will log messages like this:
+** May 22 18:50:15 local host log credentials: host = xxx.xxx.xxx.xxx service = sshd user = root root = xxxxxxx ** in system syslog;
+** 1573749689 host = 192.168.1.223 service = sshd user = aaaaaaaaaaaaaaaa pass = aaaaaaaaaaaaaaa in the file if configured.
 
 The idea of this module is to facilitate obtaining information that allows you to analyze brute force attacks on ssh and other services.
 
@@ -21,6 +22,12 @@ Use at your own risk!
 Do not use on a production system where multiple users have access to the logs. If you do, everyone has access to all credentials.
 
 If you still want to do so, configure the log file access permissions.
+
+## Tested Services / Commands
+The module has been tested with the services / commands:
+** sshd service;
+** sudo command;
+** su command.
 
 ## Ethic
 Since this module logs all the credentials it is clear that it also logs the correct ones.
@@ -54,7 +61,7 @@ It is also necessary to install the package "pam-devel" that has the necessary h
 # yum install pam-devel
 ```
 
-#### Ubuntu
+#### Ubuntu 16.04
 In Ubuntu it is necessary to install the software dependent to compile this software.
 
 It is also necessary to install the package "libpam0g-dev" that has the necessary headers so that it is possible to develop modules for the PAM in the system that we use.
@@ -109,7 +116,7 @@ $ make
 In order for the module to work we need to add the following line to the /etc/pam.d/sshd configuration file before any other module or file inclosion.
 
 ```
-auth       optional     log_credentials.so 
+auth       optional     log_credentials.so
 ```
 
 ## PAM Module Options

