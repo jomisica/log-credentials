@@ -3,9 +3,10 @@ PAM log-credentials has been written by José Miguel Silva Caldeira <miguel@ncdc
 
 ## Description:
 PAM log-credentials allows you to log credentials.
+
 It will log messages like this:
-** May 22 18:50:15 local host log credentials: host = xxx.xxx.xxx.xxx service = sshd user = root root = xxxxxxx ** in system syslog;
-** 1573749689 host = 192.168.1.223 service = sshd user = aaaaaaaaaaaaaaaa pass = aaaaaaaaaaaaaaa in the file if configured.
+* May 22 18:50:15 local host log credentials: host = xxx.xxx.xxx.xxx service = sshd user = root root = xxxxxxx ** in system syslog;
+* 1573749689 host = 192.168.1.223 service = sshd user = aaaaaaaaaaaaaaaa pass = aaaaaaaaaaaaaaa in the file if configured.
 
 The idea of this module is to facilitate obtaining information that allows you to analyze brute force attacks on ssh and other services.
 
