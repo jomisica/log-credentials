@@ -18,44 +18,48 @@
  * "Fernando Pessoa"
  */
 
-#include <stdio.h>
-#include <string.h>   /* strcmp,strncpy,... */
 #include <nss.h>
 #include <pwd.h>
+#include <stdio.h>
+#include <string.h> /* strcmp,strncpy,... */
 
 #include <log_credentials_common.h>
 
-int verify_if_need_run(char *service){
-        char filename[500];
-        sprintf(filename, "/etc/pam.d/%s", service);
+int verify_if_need_run(char *service) {
+  char filename[500];
+  sprintf(filename, "/etc/pam.d/%s", service);
 
-        int is_only_for_true_users=0;
-        char buffer[1024];
-        FILE *fp = fopen(filename, "r");
-        if(fp) {
-                while (fgets(buffer, sizeof(buffer), fp)) {
-                        if(strstr(buffer, " log_credentials.so ") != NULL && strstr(buffer, " onlytrueusers") != NULL) {
-                                is_only_for_true_users=1;
-                                break;
-                        }
-                }
-                fclose(fp);
-        }
+  int is_only_for_true_users = 0;
+  char buffer[1024];
+  FILE *fp = fopen(filename, "r");
+  if (fp) {
+    while (fgets(buffer, sizeof(buffer), fp)) {
+      if (strstr(buffer, " log_credentials.so ") != NULL &&
+          strstr(buffer, " onlytrueusers") != NULL) {
+        is_only_for_true_users = 1;
+        break;
+      }
+    }
+    fclose(fp);
+  }
 
-        return is_only_for_true_users;
+  return is_only_for_true_users;
 }
 
-enum nss_status _nss_log_credentials_getpwnam_r(char *name, struct passwd *result, char *buffer, size_t buflen, int *errnop) {
-        if(name == NULL || verify_if_need_run(__progname)) {
-                *errnop = EINVAL;
-                return NSS_STATUS_UNAVAIL;
-        }
+enum nss_status _nss_log_credentials_getpwnam_r(char *name,
+                                                struct passwd *result,
+                                                char *buffer, size_t buflen,
+                                                int *errnop) {
+  if (name == NULL || verify_if_need_run(__progname)) {
+    *errnop = EINVAL;
+    return NSS_STATUS_UNAVAIL;
+  }
 
-        result->pw_name=name;
-        result->pw_uid=60000;
-        result->pw_gid=60000;
-        result->pw_dir="/";
-        result->pw_shell="/sbin/nologin";
+  result->pw_name = name;
+  result->pw_uid = 60000;
+  result->pw_gid = 60000;
+  result->pw_dir = "/";
+  result->pw_shell = "/sbin/nologin";
 
-        return NSS_STATUS_SUCCESS;
+  return NSS_STATUS_SUCCESS;
 }
