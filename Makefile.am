@@ -10,12 +10,13 @@
 ACLOCAL_AMFLAGS= -I config
 mdir=$(PAMMODULEDIR)
 sdir=$(NSSMODULEDIR)
-#m_LTLIBRARIES = log_credentials.la
-#log_credentials_la_SOURCES = log_credentials.c
-#log_credentials_la_LDFLAGS = -module -avoid-version
 
 m_LTLIBRARIES=log_credentials.la
 s_LTLIBRARIES=libnss_log_credentials.la
+
+install-data-local: etc/pam.d/log-credentials
+	cp etc/pam.d/log-credentials /etc/pam.d
+
 
 log_credentials_la_SOURCES=log_credentials.c
 log_credentials_la_LDFLAGS=-module -avoid-version

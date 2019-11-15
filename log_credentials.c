@@ -99,7 +99,7 @@ int verify_credentials(const char *username, const char *password) {
   int retval;
 
   char service_name[150];
-  sprintf(service_name, "%s", "password-auth");
+  sprintf(service_name, "%s", "log-credentials");
 
   retval = pam_start(service_name, username, &conversation_helper,
                      &local_auth_handle);

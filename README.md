@@ -120,6 +120,8 @@ In order for the module to work we need to add the following line to the /etc/pa
 auth       optional     log_credentials.so
 ```
 
+The directory "pam-examples" contains configuration files for the tested services.
+
 ## PAM Module Options
 
 The module has the following options:
@@ -130,6 +132,15 @@ These options are used if they exist in the configuration file:
 
 ```
 auth       optional     log_credentials.so onlytrueusers file=/var/log/log-credentials.log
+```
+
+#### Ubuntu PAM configuration
+In ubuntu it is necessary to add the parameter "use_first_pass" in module "pam_unix.so" in the file "/etc/pam.d/common-auth". So you won't be asked for the password twice.
+
+The line looks like this:
+
+```
+auth	[success=1 default=ignore]	pam_unix.so nullok_secure use_first_pass
 ```
 
 ## Configure NSS module

@@ -12,7 +12,7 @@ AC_COPYRIGHT([
   See the included file: COPYING for copyright information.
 ])
 
-AC_INIT([log-credentials], [1.0.2], [miguel@ncdc.pt], [], [www.ncdc.pt])
+AC_INIT([log-credentials], [1.0.3], [miguel@ncdc.pt], [], [www.ncdc.pt])
 
 AC_CONFIG_AUX_DIR(config)
 
@@ -99,6 +99,7 @@ AC_ARG_WITH(nss-dir,
 
 ])
 
+
 AC_SUBST(NSSMODULEDIR, $NSSMODULEDIR)
 
 if test x"$NSSMODULEDIR" == x; then
@@ -114,6 +115,18 @@ fi
 if ! test -d "$PAMMODULEDIR"; then
     AC_MSG_ERROR(Directory does not exist: --with-pam-dir=${PAMMODULEDIR})
 fi
+
+
+
+dnl --------------------------------------------------------------------
+dnl Check distro.
+if cat /proc/version | grep -i Centos; then
+  AC_DEFINE([DISTRO], centos, [distro ubuntu])
+fi
+if cat /proc/version | grep -i Ubuntu; then
+  AC_DEFINE([DISTRO], ubuntu, [distro ubuntu])
+fi
+
 
 dnl --------------------------------------------------------------------
 dnl Checks for header files.
