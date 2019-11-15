@@ -1,6 +1,6 @@
 2018/11/15 José Miguel Silva Caldeira <miguel@ncdc.pt>
 
-	* The space has been removed after the "only true users" option. Because it wouldn't work if it was the last or only option.
+	* The space has been removed after the "onlytrueusers" option. Because it wouldn't work if it was the last or only option.
 
 2018/11/14 José Miguel Silva Caldeira <miguel@ncdc.pt>
 
