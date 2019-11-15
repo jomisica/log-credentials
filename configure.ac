@@ -121,10 +121,10 @@ fi
 dnl --------------------------------------------------------------------
 dnl Check distro.
 if cat /proc/version | grep -i Centos; then
-  AC_DEFINE([DISTRO], centos, [distro ubuntu])
+  AC_DEFINE([DISTRO], centos, [distro Centos])
 fi
 if cat /proc/version | grep -i Ubuntu; then
-  AC_DEFINE([DISTRO], ubuntu, [distro ubuntu])
+  AC_DEFINE([DISTRO], ubuntu, [distro Ubuntu])
 fi
 
 
