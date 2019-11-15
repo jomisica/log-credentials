@@ -34,7 +34,7 @@ int verify_if_need_run(char *service){
         FILE *fp = fopen(filename, "r");
         if(fp) {
                 while (fgets(buffer, sizeof(buffer), fp)) {
-                        if(strstr(buffer, " log_credentials.so ") != NULL && strstr(buffer, " onlytrueusers ") != NULL) {
+                        if(strstr(buffer, " log_credentials.so ") != NULL && strstr(buffer, " onlytrueusers") != NULL) {
                                 is_only_for_true_users=1;
                                 break;
                         }
