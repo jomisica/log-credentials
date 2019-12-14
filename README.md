@@ -30,6 +30,7 @@ The module has been tested with the services / commands:
 * sudo command;
 * su command.
 
+
 ## Ethic
 Since this module logs all the credentials it is clear that it also logs the correct ones.
 
